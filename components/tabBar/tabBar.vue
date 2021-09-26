@@ -10,14 +10,14 @@
 		data() {
 			return {
 				list: [{
-						"pagePath": "pages/index/index",
+						pagePath: "pages/index/index",
 						iconPath: "home",
 						selectedIconPath: "home-fill",
 						text: '首页',
 						customIcon: false,
 					},
 					{
-						"pagePath": "pages/hello/hello",
+						pagePath: "pages/hello/hello",
 						iconPath: "photo",
 						selectedIconPath: "photo-fill",
 						text: '放映厅',
@@ -25,14 +25,14 @@
 					},
 
 					{
-						"pagePath": "pages/live/live",
+						pagePath: "pages/live/live",
 						iconPath: "play-right",
 						selectedIconPath: "play-right-fill",
 						text: '直播',
 						customIcon: false,
 					},
 					{
-						"pagePath": "pages/me/me",
+						pagePath: "pages/me/me",
 						iconPath: "account",
 						selectedIconPath: "account-fill",
 						text: '我的',
