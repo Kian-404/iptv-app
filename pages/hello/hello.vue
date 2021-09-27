@@ -9,7 +9,7 @@
 				</u-sticky>
 				<u-cell-group>
 					<u-cell-item icon="rewind-right-fill" :title="item.title" v-for="(item,index) in list"
-						@click="showInfo(item)" :arrow="false">
+						:key="item.url" @click="showInfo(item)" :arrow="false">
 						<!-- 		<view class="item">
 							<view class="image" v-slot="icon">
 								<u-image width="100rpx" height="100rpx" v-if="item['tvg-logo'].length !== 0"
@@ -27,16 +27,9 @@
 						</view> -->
 
 					</u-cell-item>
-					
-				</u-cell-group>
-			
 
-				<u-popup v-model="show" mode="center">
-					<view>
-						<video id="myVideo" :src="vedio.url" :danmu-btn="false" enable-danmu controls autoplay
-							:title="vedio.title" play-strategy="3"></video>
-					</view>
-				</u-popup>
+				</u-cell-group>
+				<Player :vedio="vedio" :show="show" @changeShow="changeShow" />
 			</view>
 		</view>
 		<tab-bar></tab-bar>
@@ -45,10 +38,14 @@
 </template>
 
 <script>
+	import Player from '../../components/play/play.vue'
 	export default {
+		components: {
+			Player
+		},
 		data() {
 			return {
-
+				history: new Map(),
 				loading: true,
 				show: false,
 				list: [],
@@ -77,23 +74,41 @@
 			}
 		},
 		methods: {
-
+			changeShow(flag) {
+				this.show = flag
+			},
 			showInfo(item) {
+				this.history.set(item.title, item);
+				console.log(this.history)
+				uni.setStorage({
+					key: 'channels',
+					data: JSON.stringify([...this.history]),
+					success: function() {
+						console.log('success');
+					}
+				})
 				console.log(item)
 				this.show = true;
 				this.vedio = item;
+				uni.getStorage({
+					key: 'channels',
+					success: function(res) {
+						console.log(res.data);
+					}
+				})
 			},
 			change(index) {
 				this.current = index;
-				let url = 'https://iptv-api.vercel.app/api/satellite-list'
+				let BASE_URL = 'https://iptv-api.vercel.app'
+				let url = '/api/satellite-list'
 				if (this.current == 0) {
-					url = 'https://iptv-api.vercel.app/api/satellite-list'
+					url = '/api/satellite-list'
 				} else if (this.current == 1) {
-					url = 'https://iptv-api.vercel.app/api/move-list'
+					url = '/api/move-list'
 				} else if (this.current == 2) {
-					url = 'https://iptv-api.vercel.app/api/sport-list'
+					url = '/api/sport-list'
 				}
-				this.$u.get(url).then(res => {
+				this.$u.get(`${BASE_URL}${url}`).then(res => {
 					console.log(res);
 					this.list = res.data;
 					this.loading = false;
@@ -112,6 +127,7 @@
 <style lang="scss">
 	.hello {
 		height: 100vh;
+
 		.content {
 			.item {
 				display: flex;
